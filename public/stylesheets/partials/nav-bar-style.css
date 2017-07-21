@@ -1,0 +1,15 @@
+
+.navbar-default{
+    margin-bottom: 0px;
+}
+.btn-default{
+    background-color: #f8f8f8;
+    border: none;
+}
+.btn-default:hover{
+    background-color: #eee;
+
+}
+#mainContent.container{
+    margin-left: 0px;
+}

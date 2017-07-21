@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <% include ../views/partials/head.ejs %>
+</head>
+<style>
+
+    body {
+        font: 12px sans-serif;
+    }
+
+    path {
+        stroke-width: 1px;
+        stroke: #f9f1f1;
+        fill: #0485f1;
+        cursor: pointer;
+    }
+
+    path:hover, path.highlighted {
+        fill: tomato;
+    }
+
+    #table{
+        font-size: xx-large;
+        margin: 30px;
+        width: 60%;
+    }
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+    #map{
+        width: 60%;
+        float: left;
+    }
+    #right{
+        width: 40%;
+        float: right;
+    }
+
+</style>
+<link rel="stylesheet" href="/stylesheets/partials/nav-bar-style.css">
+<% if (title) { %>
+<script>
+    myVar = JSON.parse('<%- JSON.stringify(data) %>');
+</script>
+<% } %>
+<body class="container">
+    <header>
+        <% include ../views/partials/header %>
+    </header>
+
+    <main>
+        <% include ../views/partials/main-upper.ejs %>
+
+        <div class="container" id="mainContent">
+            <div class="col-md-6"></div>
+            <div class="col-md-6"></div>
+        </div>
+    </main>
+
+<div id="map"></div>
+<div id="right">
+<div id="table">
+    <table>
+        <tr>
+            <td>ID</td>
+            <td>ZONE</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+</div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+//console.log(myVar);
+    //Map dimensions (in pixels)
+    var width = 543,
+        height = 600;
+
+    //Map projection
+    var projection = d3.geo.mercator()
+        .scale(116254.83259398505)
+        .center([77.00601196289062,28.522716277421576]) //projection center
+        .translate([width/2,height/2]) //translate to center the map in view
+
+    //Generate paths based on projection
+    var path = d3.geo.path()
+        .projection(projection);
+
+    //Create an SVG
+    var svg = d3.select("body").select("#map").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+      //  .attr("xlink:href", "http://www.google.com");
+
+    //Group for the map features
+    var features = svg.append("g")
+        .attr("class","features");
+
+    //Create zoom/pan listener
+    //Change [1,Infinity] to adjust the min/max zoom scale
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([1, 6])
+        .on("zoom",zoomed);
+
+    svg.call(zoom);
+
+    d3.json("outsidex.geo.json",function(error,geodata) {
+        if (error) return console.log(error); //unknown error, check the console
+
+        //Create a path for each map feature in the data
+        features.selectAll("path")
+            .data(geodata.features)
+            .enter()
+            .append("path")
+            .attr("d",path)
+            .on("mouseover",hovered)
+            .on("click",clicked);
+
+    });
+
+    // Add optional onClick events for features here
+    // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+    function clicked(d,i) {
+        //console.log(d.properties.Id,i);
+        window.location = '"'+d.properties.href + '"';
+    }
+
+    function hovered(d,i) {
+        //console.log(d.properties.Id,i);
+
+        var result = $.grep(myVar, function(e){ return e.Id == d.properties.Id; });
+        //console.log(result[0].Id);
+        var ab =$('#table table tr:last td:first');
+        $('#table table tr:last td:first')[0].innerHTML = result[0].Id;
+        $('#table table tr:last td:last')[0].innerHTML = result[0].ZONE;
+        //console.log(ab);
+        //console.log($('#table table tr:last td:first')[0]);
+
+    }
+
+
+    //Update map on zoom/pan
+    function zoomed() {
+        features.attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")")
+            .selectAll("path").style("stroke-width", 1 / zoom.scale() + "px" );
+    }
+
+
+
+
+</script>
+
+</body>
