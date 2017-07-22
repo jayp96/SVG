@@ -3,6 +3,16 @@ var router = express.Router();
 var root = require('app-root-path');
 //var PROJECT_DIR = router.PROJECT_DIR;
 
+// split up route handling
+router.use('/complaints', require('./complaints'));
+router.use('/downloads', require('./downloads'));
+router.use('/governance', require('./governance'));
+router.use('/home', require('./home'));
+router.use('/know-your-area', require('./KNA'));
+// etc.
+
+module.exports = router;
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -42,7 +52,7 @@ router.get('/suggestions', function(req, res, next) {
 });
 
 router.get('/about', function(req, res, next) {
-    res.render( 'pages/about', { title: 'Express' });
+    res.render( 'pages/home/about', { title: 'Express' });
 });
 
 router.get('/overview', function(req, res, next) {

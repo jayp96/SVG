@@ -5,6 +5,15 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="/lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="/lib/leaflet/leaflet.label.css" />
+    <script src="/lib/leaflet/leaflet.js"></script>
+    <script src="/lib/leaflet/leaflet.label.js"></script>
+    <script src="http://maps.google.com/maps/api/js?key=AIzaSyBvIxsaY42V0jNvb_32xXIZ78r-4EpHfO8&v=3"></script>
+    <script src="/lib/leaflet/Google.js"></script>
+    <script src="/lib/leaflet/leaflet.ajax.js"></script>
+    <script src="/data/data/countries.geojson"></script>
     <% include ../../partials/head.ejs %>
 </head>
 <style>
@@ -68,16 +77,20 @@
     #rohini{
         background-color: moccasin;
     }
+
+    #map { height : 400px; width: 100%}
+
+
 </style>
 <link rel="stylesheet" href="/stylesheets/partials/nav-bar-style.css">
 <body class="container">
 <header>
     <h1>OverView</h1>
-    <% include ../partials/header %>
+    <% include ../../partials/header %>
 </header>
 <main>
     <%# include ../partials/main-upper.ejs %>
-
+    <div>
     <div class="col-md-4">
         <h1>Delhi</h1>
         <p class="medium text-left">
@@ -230,15 +243,237 @@
             </div>
         </div>
 
-        <div>
-            <img src="/images/overview/zonefile.jpg" class="img-responsive" alt="Image">
+        <div id="map">
+            <!--<img src="/images/overview/zonefile.jpg" class="img-responsive" alt="Image">-->
         </div>
 
     </div>
+    </div>
 </main>
-<footer>
 
+<footer class="footer">
     <% include ../../partials/footer.ejs %>
+
 </footer>
+<script>
+    //var countriesLayer;
+    var map = L.map('map').setView([28.7041,77.1025], 9.5);
+    var delhiZone = new L.GeoJSON.AJAX("/data/delhiZone/zones.geo.json",
+        {
+            style : countriesStyle,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    function highlightFeature(e){
+        var layer = e.target;
+        layer.bindPopup('<h1>ZONE NO:'+layer.feature.properties.zoneno+'</h1><p>name: '+layer.feature.properties.zone+'</p>').addTo(map);
+        layer.setStyle(
+            {
+                weight : 5,
+                color : 'black',
+                fillColor : 'white',
+                fillOpacity : 0.2
+            }
+        );
+        if(!L.Browser.ie && !L.Browser.opera){
+            layer.bringToFront();
+        }
+    }
+
+    function resetHighlight(e){
+
+        delhiZone.resetStyle(e.target)
+    }
+
+    function zoomToFeature(e){
+        layer = e.target;
+
+
+        map.fitBounds(e.target.getBounds());
+    }
+
+
+    /*map.on('click', function (e) {
+     if (marker) {
+     map.removeLayer(marker);
+     }
+     //marker = new L.Marker(e.latlng).addTo(map);
+     });*/
+
+    /*var marker = L.marker(layer.getBounds().getCenter()).bindPopup('something').addTo(map);
+    marker.openPopup();
+
+    //changing the content on mouseover
+    marker.on('mouseover', function(){
+        marker._popup.setContent('something else')
+    });*/
+
+    /*var marker;
+    function countriesOnEachFeature(feature, layer){
+        marker.push(
+            L.circleMarker(
+                layer.getBounds().getCenter(),
+                {
+                    radius : 0.0,
+                    opacity : 0,
+                    fillOpacity : 0
+                }
+            )
+        );
+        /!*var markersCount = markers.length;
+        markers[markersCount - 1].bindLabel(
+            feature.properties.zoneno.toString(),
+            {
+                noHide : true,
+                className : 'map-label',
+                pane : 'mapPane'
+            }
+        );*!/
+/!*        markers[markersCount - 1].addTo(map);
+        markers[markersCount - 1].hideLabel();*!/
+
+        layer.on(
+            {
+                mouseover : highlightFeature,
+                mouseout : resetHighlight,
+                click : zoomToFeature
+            }
+        );
+    }*/
+
+    function getZoneColor(zoneno){
+        if(zoneno == 1){
+            return 'paleturquoise';
+        }else if(zoneno == 2){
+            return 'gold';
+        }else if(zoneno == 3){
+            return 'lightcyan';
+        }else if(zoneno == 4){
+            return 'bisque';
+        }else if(zoneno == 5){
+            return 'coral';
+        }else if(zoneno == 6){
+            return 'deepskyblue';
+        }else if(zoneno == 7){
+            return 'indianred';
+        }else if(zoneno == 8){
+            return 'moccasin';
+        }else if(zoneno == 9){
+            return '#dddddd';
+        }else if(zoneno == 10){
+            return 'lightgoldenrodyellow';
+        }else if(zoneno == 11){
+            return 'springgreen';
+        }else if(zoneno == 12){
+            return 'chocolate';
+        }
+        else{
+            return 'ivory';
+        }
+    }
+
+    function countriesStyle(feature){
+        return {
+            fillColor : getZoneColor(feature.properties.zoneno),
+            weight : 2,
+            opacity : 1,
+            color : 'black',
+            dashArray : 3,
+            fillOpacity : 0.7
+        }
+    }
+
+
+
+/*    var googleRoadmapLayer = new L.Google('ROADMAP');
+    map.addLayer(googleRoadmapLayer);
+
+    var googleLayer = new L.Google();
+    map.addLayer(googleLayer);*/
+
+    /*countriesLayer = L.geoJson(
+        delhiZone._layers,
+        {
+            style : countriesStyle,
+            //onEachFeature : countriesOnEachFeature
+        }
+    ).addTo(map);*/
+
+    //map.fitBounds(countriesLayer.getBounds());
+
+    //var legend = L.control({position : 'bottomright'});
+    /*legend.onAdd = function(map){
+        var div = L.DomUtil.create('div', 'legend');
+        var labels = [
+            "Population greater than 100000000",
+            "Population greater than 50000000",
+            "Population equal or less than 50000000"
+        ];
+        var grades = [100000001, 50000001, 50000000];
+        div.innerHTML = '<div><b>Legend</b></div>';
+        for(var i = 0; i < grades.length; i++){
+            div.innerHTML += '<i style="background:'
+                + getCountryColor(grades[i]) + '">&nbsp;&nbsp;</i>&nbsp;&nbsp;'
+                + labels[i] + '<br />';
+        }
+        return div;
+    }
+    legend.addTo(map);*/
+
+   /* var visible;
+    map.on(
+        'zoomend',
+        function(e){
+            if(map.getZoom() > 5){
+                if(!visible){
+                    for(var i = 0; i < markers.length; i++){
+                        markers[i].showLabel();
+                    }
+                    visible = true;
+                }
+            }else{
+                if(visible){
+                    for(var i = 0; i < markers.length; i++){
+                        markers[i].hideLabel();
+                    }
+                    visible = false;
+                }
+            }
+        }
+
+    );
+*/
+    //var imageUrl = '/data/data/SP27GTIF.png';
+    /*var imageBounds = [
+        [41.91713209771033, -87.66747359388185],
+        [41.83299831003662, -87.5823733664601]
+    ];*/
+   // var imageLayer = L.imageOverlay(imageUrl, imageBounds).addTo(map);
+    //map.fitBounds(imageBounds);
+
+    /*var baseMaps = {
+        /!*'Google Roadmap' : googleRoadmapLayer,
+        'Google' : googleLayer*!/
+        'Delhi' : delhiZone,
+        'Google Roadmap' : delhiZone.addLayer(new L.Google('ROADMAP'))
+    };*/
+
+
+var overlayMaps = {
+        'DELHI' : delhiZone,
+/*    'DELHI-roadmap' : delhiZone.addLayer(new L.Google('ROADMAP')),
+    'DELHI-roadmap' : delhiZone.addLayer(new L.Google('ROADMAP')),*/
+        //'Image' : imageLayer
+    };
+    L.control.layers(overlayMaps).addTo(map);
+</script>
 </body>
 </html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <% include ../../partials/head.ejs %>
+</head>
+<link rel="stylesheet" href="/stylesheets/partials/nav-bar-style.css">
+<body class="container">
+<header>
+    <h1>Sewage Disposal</h1>
+    <% include ../../partials/header %>
+</header>
+<main>
+    <% include ../../partials/main-upper.ejs %>
+    <form class="form-horizontal" action="/map2">
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="name" placeholder="Enter Name" name="Name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="address">Address</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="address" placeholder="Enter Address" name="address">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="contactno">Contact No.</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" id="contactno" placeholder="Enter Contact No." name="contactno">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="email">Email:</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="sel1">Complaint</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="sel1">
+                    <option>Water Logging</option>
+                    <option>Need Of New Drain</option>
+                    <option>Upgradation Of Kachha Drain to Pucca Drain</option>
+                    <option>Blocked Drain</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="Detail_Desc">Detail Description</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Detail_Desc"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="up_image">Upload Images</label>
+            <div class="col-sm-10">
+                <div class="col-sm-3">
+                    <input type="file" class="form-control" id="up_image" placeholder="Upload Image" name="up_image">
+                </div>
+                <div class="col-sm-3">
+                    <input type="file" class="form-control" id="up_image" placeholder="Upload Image" name="up_image">
+                </div>
+                <div class="col-sm-3">
+                    <input type="file" class="form-control" id="up_image" placeholder="Upload Image" name="up_image">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="Previous_Comp">Any Previous Complaint Document</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Previous_Comp"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+    </form>
+</main>
+<footer>
+
+    <% include ../../partials/footer.ejs %>
+</footer>
+</body>
+</html>

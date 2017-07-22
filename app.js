@@ -24,6 +24,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('views');
 app.use('/', index);
+/*app.use('/complaints', require('./routes/complaints'));
+app.use('/downloads', require('./routes/downloads'));
+app.use('/governance', require('./routes/governance'));
+app.use('/know-your-area', require('./routes/KNA'));*/
 app.use('/users', users);
 
 //MONGO
